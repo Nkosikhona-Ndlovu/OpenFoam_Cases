@@ -1,0 +1,176 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2206                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      snappyHexMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+castellatedMesh true;
+snap            true;
+addLayers       false;
+
+geometry
+{
+    R1.stl{ type triSurfaceMesh; name R1;}
+    R2.stl{ type triSurfaceMesh; name R2;}
+    R3.stl{ type triSurfaceMesh; name R3;}
+    R4.stl{ type triSurfaceMesh; name R4;}
+    heatSink.stl{ type triSurfaceMesh; name heatSink;}
+      
+    box
+    {
+       type            searchableBox;
+       min             (-0.015 -0.015 -0.005);
+       max             (0.015 0.015 0.01);
+    }
+    
+    cylinder
+    {
+       type            searchableCylinder;
+       point1          (0 0 -0.1);
+       point2          (0 0 0.1);
+       radius          0.2;
+    }
+
+    R1AMI
+    {
+       type            searchableCylinder;
+       point1          (-0.075 0.075 -0.01);
+       point2          (-0.075 0.075 0.01);
+       radius          0.07;
+    }
+
+    R2AMI
+    {
+       type            searchableCylinder;
+       point1          (0.075 0.075 -0.01);
+       point2          (0.075 0.075 0.01);
+       radius          0.07;
+    }
+    
+    R3AMI
+    {
+       type            searchableCylinder;
+       point1          (0.075 -0.075 -0.01);
+       point2          (0.075 -0.075 0.01);
+       radius          0.07;
+    }
+    
+    R4AMI
+    {
+       type            searchableCylinder;
+       point1          (-0.075 -0.075 -0.01);
+       point2          (-0.075 -0.075 0.01);
+       radius          0.07;
+    }
+}
+
+castellatedMeshControls
+{
+    maxLocalCells 100000;
+    maxGlobalCells 8000000;
+    minRefinementCells 20;
+    maxLoadUnbalance 0.10;
+    nCellsBetweenLevels 2;
+
+    features
+    (
+        { file "R1.eMesh"; level 4;} // Note: better: level 3
+        { file "R2.eMesh"; level 4;}
+        { file "R3.eMesh"; level 4;}
+        { file "R4.eMesh"; level 4;}
+        { file "heatSink.eMesh"; level 5;}
+    );
+
+    refinementSurfaces
+    {
+        R1{ level (4 4);} // Note: better: levels 3 3
+        R2{ level (4 4);}
+        R3{ level (4 4);} 
+        R4{ level (4 4);}
+        heatSink{ level (4 4);}
+    }
+
+    resolveFeatureAngle 30;
+
+    refinementRegions
+    {
+        // Note: for better mesh quality utilize this refinement region
+        box{ mode inside; levels ((1.0 7));}
+        cylinder{ mode inside; levels ((1.0 4));}
+        R1AMI{ mode inside; levels ((1.0 5));}
+        R2AMI{ mode inside; levels ((1.0 5));}
+        R3AMI{ mode inside; levels ((1.0 5));}
+        R4AMI{ mode inside; levels ((1.0 5));}
+    }
+
+    locationsInMesh
+    (
+        (( 0.11725 0.395251 -1.51545548 ) air )
+        (( 0.0 0.0 0.001 ) heatSink )
+    );
+    allowFreeStandingZoneFaces true;
+}
+
+snapControls
+{
+    tolerance       2;
+    implicitFeatureSnap true;
+    explicitFeatureSnap false;
+    multiRegionFeatureSnap true;
+    detectNearSurfacesSnap true;
+    nSmoothPatch    3;
+    nSolveIter      50;
+    nRelaxIter      5;
+    nFeatureSnapIter 10;
+    nSmoothInternal 3;
+    nFaceSplitInterval -1;
+}
+
+addLayersControls
+{
+    layers
+    {
+        heatSink
+        {
+            nSurfaceLayers 3;
+        }    
+    }
+    relativeSizes    true;
+    expansionRatio    1.2;
+    firstLayerThickness   0.1;
+    featureAngle    85;
+    slipFeatureAngle 30;
+    nGrow           0;
+    nBufferCellsNoExtrude 0;
+    minMedialAxisAngle 90;
+    maxFaceThicknessRatio 0.2;
+    maxThicknessToMedialRatio 0.3;
+    minThickness    1e-06;
+    nLayerIter      50;
+    nRelaxIter      5;
+    nSmoothSurfaceNormals 10;
+    nSmoothNormals  3;
+    nSmoothThickness 10;
+    nRelaxedIter    10;
+    nMedialAxisIter 10;
+}
+
+meshQualityControls
+{
+    #include "meshQualityDict"
+}
+
+mergeTolerance 1e-6;
+
+
+// ************************************************************************* //

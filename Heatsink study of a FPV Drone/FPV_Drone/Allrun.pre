@@ -1,0 +1,25 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+
+
+mkdir -p constant/triSurface
+
+# copy cpu surface from geometry directory
+cp -r geometry/. constant/triSurface/
+
+runApplication blockMesh
+runApplication surfaceFeatureExtract
+#runApplication snappyHexMesh -overwrite
+
+runApplication $decompDict decomposePar
+restore0Dir -processor
+runParallel snappyHexMesh -overwrite
+
+runParallel splitMeshRegions -cellZones -overwrite
+runParallel topoSet -region air
+
+#runParallel renumberMesh -overwrite
+
+#------------------------------------------------------------------------------

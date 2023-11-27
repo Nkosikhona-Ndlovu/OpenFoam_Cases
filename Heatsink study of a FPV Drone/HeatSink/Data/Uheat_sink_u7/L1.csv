@@ -1,0 +1,2 @@
+Cell ID,alphat,Area,Cell Type,epsilon,heatTransferCoeff(T),k,nut,p,p_rgh,rho,T,U_0,U_1,U_2,U_Magnitude,yPlus
+0,0.000335074,5e-05,1,19131,0,1.42774,0.00027353,359.629,359.689,1.225,291.356,-9.10015,0.149276,0.00177403,9.10137,0

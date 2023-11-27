@@ -1,0 +1,25 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+
+./Allrun.pre
+
+# Check mesh
+runParallel checkMesh -allGeometry -allTopology -writeAllFields -writeSets vtk
+
+# Run
+runParallel $(getApplication)
+
+# Reconstruct
+reconstructParMesh -allRegions -constant
+reconstructPar -allRegions
+
+# Reconstruct
+#for region in $(foamListRegions)
+#do
+#    runParallel -s reconstruct-$region \
+#        redistributePar -reconstruct -region $region
+#done
+
+#------------------------------------------------------------------------------

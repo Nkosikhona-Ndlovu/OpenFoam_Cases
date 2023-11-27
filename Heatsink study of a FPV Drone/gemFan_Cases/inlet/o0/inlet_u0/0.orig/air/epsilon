@@ -1,0 +1,62 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2206                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      epsilon;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 2 -3 0 0 0 0];
+
+internalField   uniform 1E-5;
+
+boundaryField
+{
+    #includeEtc "caseDicts/setConstraintTypes"
+    UpperWall
+    {
+        type            epsilonWallFunction;
+        value           $internalField;
+    }
+
+    LowerWall
+    {
+        type            epsilonWallFunction;
+        value           $internalField;
+    }
+
+    heatSink
+    {
+        type            epsilonWallFunction;
+        value           $internalField;
+    }
+
+    "R.*"
+    {
+        type            epsilonWallFunction;
+        value           $internalField;
+    }
+
+    SideWall
+    {
+        type            inletOutlet;
+        inletValue      $internalField;
+        value           $internalField;
+    }
+
+    air_to_heatSink
+    {
+        type            epsilonWallFunction;
+        value           $internalField;
+    }
+}
+
+// ************************************************************************* //

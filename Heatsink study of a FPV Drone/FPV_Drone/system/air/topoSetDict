@@ -1,0 +1,106 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2206                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      topoSetDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+actions
+(
+    // Remove existing cellZone (from splitMeshRegions; contains all cells)
+    // so we don't have any cells in multiple cellZones (gives complaints
+    // in e.g. reconstructParMesh)
+    {
+        name            air;
+        type            cellZoneSet;
+        action          remove;
+    }
+
+    {
+        name            v_MRF_set1;
+        type            cellSet;
+        action          new;
+        source          searchableSurfaceToCell;
+        surfaceType     cylinder;
+        point1          (-0.5 0.5 -0.05);
+        point2          (-0.5 0.5 0.05);
+        radius          0.35;
+    }
+
+    {
+        name            cellMRFZone1;
+        type            cellZoneSet;
+        action          new;
+        source          setToCellZone;
+        set             v_MRF_set1;
+    }
+
+    {
+        name            v_MRF_set2;
+        type            cellSet;
+        action          new;
+        source          searchableSurfaceToCell;
+        surfaceType     cylinder;
+        point1          (0.5 0.5 -0.05);
+        point2          (0.5 0.5 0.05);
+        radius          0.35;
+    }
+
+    {
+        name            cellMRFZone2;
+        type            cellZoneSet;
+        action          new;
+        source          setToCellZone;
+        set             v_MRF_set2;
+    }
+
+    {
+        name            v_MRF_set3;
+        type            cellSet;
+        action          new;
+        source          searchableSurfaceToCell;
+        surfaceType     cylinder;
+        point1          (0.5 -0.5 -0.05);
+        point2          (0.5 -0.5 0.05);
+        radius          0.35;
+    }
+
+    {
+        name            cellMRFZone3;
+        type            cellZoneSet;
+        action          new;
+        source          setToCellZone;
+        set             v_MRF_set3;
+    }
+
+    {
+        name            v_MRF_set4;
+        type            cellSet;
+        action          new;
+        source          searchableSurfaceToCell;
+        surfaceType     cylinder;
+        point1          (-0.5 -0.5 -0.05);
+        point2          (-0.5 -0.5 0.05);
+        radius          0.35;
+    }
+
+    {
+        name            cellMRFZone4;
+        type            cellZoneSet;
+        action          new;
+        source          setToCellZone;
+        set             v_MRF_set4;
+    }
+);
+
+// ************************************************************************* //
